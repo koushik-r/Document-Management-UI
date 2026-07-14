@@ -1,0 +1,61 @@
+<div class="documents-page">
+  <header class="page-header">
+    <h1>Document Uploader</h1>
+    <button class="btn btn-primary" (click)="goToUpload()">+ Upload</button>
+  </header>
+
+  <div class="documents-container">
+    <div class="list-header">
+      <h2>Documents</h2>
+      <input
+        class="search-input"
+        type="search"
+        placeholder="Search by name…"
+        (input)="onSearch($event)"
+      />
+    </div>
+
+    @if (loading()) {
+      <div class="empty-state">
+        <div class="empty-icon">⏳</div>
+        <p>Loading documents…</p>
+      </div>
+    } @else if (error()) {
+      <div class="empty-state">
+        <div class="empty-icon">⚠️</div>
+        <p>{{ error() }}</p>
+        <button class="btn btn-primary" (click)="ngOnInit()">Retry</button>
+      </div>
+    } @else if (documents().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📂</div>
+        <p>No documents yet.</p>
+        <button class="btn btn-primary" (click)="goToUpload()">Upload your first document</button>
+      </div>
+    } @else if (filtered().length === 0) {
+      <div class="empty-state">
+        <p>No documents match "{{ searchQuery() }}".</p>
+      </div>
+    } @else {
+      <div class="doc-grid">
+        @for (doc of filtered(); track trackById($index, doc)) {
+          <div class="doc-card" (click)="viewDocument(doc)">
+            <div class="doc-icon">{{ getIcon(doc.type) }}</div>
+            <div class="doc-details">
+              <span class="doc-name" [title]="doc.name">{{ doc.name }}</span>
+              <span class="doc-meta">
+                {{ formatBytes(doc.size) }}
+                @if (doc.compressedSize && doc.compressedSize < doc.size) {
+                  · compressed to {{ formatBytes(doc.compressedSize) }}
+                }
+              </span>
+              <span class="doc-date">{{ doc.uploadedAt | date:'medium' }}</span>
+            </div>
+            <button class="btn-icon delete-btn" (click)="deleteDocument(doc, $event)" title="Delete">🗑</button>
+          </div>
+        }
+      </div>
+      <p class="doc-count">{{ filtered().length }} of {{ documents().length }} document(s)</p>
+    }
+  </div>
+</div>

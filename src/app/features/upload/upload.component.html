@@ -1,0 +1,83 @@
+<div class="upload-page">
+  <header class="page-header">
+    <h1>Document Uploader</h1>
+    <button class="btn btn-outline" (click)="goToDocuments()">
+      View Documents →
+    </button>
+  </header>
+
+  <div class="upload-container">
+    <h2>Upload Documents</h2>
+    <p class="subtitle">PDF, Word, images, and text files supported.</p>
+
+    <!-- Drop Zone -->
+    <div
+      class="drop-zone"
+      [class.drag-over]="isDragOver()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave()"
+      (drop)="onDrop($event)"
+    >
+      <div class="drop-icon">📂</div>
+      <p>Drag &amp; drop files here</p>
+      <p class="or-divider">or</p>
+      <label class="btn btn-primary">
+        Browse Files
+        <input type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.doc,.docx,.txt,.csv"
+               (change)="onFileSelected($event)" style="display:none" />
+      </label>
+    </div>
+
+    <!-- File Queue -->
+    @if (entries().length > 0) {
+      <div class="file-queue">
+        <div class="queue-header">
+          <span>{{ entries().length }} file(s) queued</span>
+          <div class="queue-actions">
+            @if (allDone) {
+              <button class="btn btn-sm btn-outline" (click)="clearDone()">Clear done</button>
+            }
+            @if (hasPending) {
+              <button class="btn btn-primary btn-sm" (click)="uploadAll()">Upload All</button>
+            }
+          </div>
+        </div>
+
+        @for (entry of entries(); track entry.file.name) {
+          <div class="file-entry" [class]="'status-' + entry.status">
+            <div class="file-info">
+              <span class="file-name">{{ entry.file.name }}</span>
+              <span class="file-meta">{{ formatBytes(entry.file.size) }}</span>
+            </div>
+
+            <div class="file-status">
+              @switch (entry.status) {
+                @case ('idle') { <span class="badge badge-idle">Queued</span> }
+                @case ('uploading') { <span class="badge badge-progress">Uploading…</span> }
+                @case ('done') { <span class="badge badge-done">✓ Done</span> }
+                @case ('error') { <span class="badge badge-error" [title]="entry.error">✗ Error</span> }
+              }
+            </div>
+
+            @if (entry.status === 'uploading') {
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="entry.progress"></div>
+              </div>
+            }
+
+            @if (entry.status === 'idle' || entry.status === 'error') {
+              <button class="btn-icon remove-btn" (click)="removeEntry(entry)" title="Remove">✕</button>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    @if (allDone) {
+      <div class="success-banner">
+        <span>✓ All files uploaded successfully!</span>
+        <button class="btn btn-primary btn-sm" (click)="goToDocuments()">View Documents</button>
+      </div>
+    }
+  </div>
+</div>
