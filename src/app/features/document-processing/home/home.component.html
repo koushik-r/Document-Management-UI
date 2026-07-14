@@ -1,0 +1,21 @@
+<div class="idp-page">
+  <header class="page-header">
+    <h1>Intelligent Document Processing</h1>
+    <a class="btn btn-outline" routerLink="/upload">← Back to Uploader</a>
+  </header>
+
+  <div class="idp-container">
+    <h2>IDP Features</h2>
+    <p class="subtitle">Choose a feature to get started.</p>
+
+    <div class="feature-grid">
+      @for (f of features; track f.route) {
+        <a class="feature-card" [routerLink]="f.route">
+          <span class="feature-icon">{{ f.icon }}</span>
+          <span class="feature-title">{{ f.title }}</span>
+          <span class="feature-desc">{{ f.description }}</span>
+        </a>
+      }
+    </div>
+  </div>
+</div>

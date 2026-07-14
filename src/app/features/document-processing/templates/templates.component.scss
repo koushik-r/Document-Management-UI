@@ -1,0 +1,52 @@
+.tpl-create {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.tpl-row { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.tpl-filename { font-size: 0.85rem; color: var(--text-muted); }
+.tpl-input {
+  flex: 1;
+  min-width: 180px;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+}
+.tpl-check { display: flex; align-items: center; gap: 0.35rem; font-size: 0.8rem; color: var(--text-muted); }
+.tpl-error { color: var(--danger); font-size: 0.8rem; }
+
+.tpl-list { display: flex; flex-direction: column; gap: 0.6rem; }
+.tpl-card { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+.tpl-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  &:hover { background: var(--bg); }
+}
+.tpl-meta { display: flex; flex-direction: column; }
+.tpl-name { font-weight: 600; font-size: 0.9rem; }
+.tpl-sub { font-size: 0.75rem; color: var(--text-muted); }
+
+.tpl-fields { border-top: 1px solid var(--border); padding: 0.5rem 1rem; }
+.tpl-field {
+  display: grid;
+  grid-template-columns: 1fr auto 2fr;
+  gap: 0.75rem;
+  padding: 0.35rem 0;
+  font-size: 0.8rem;
+  border-bottom: 1px solid var(--border);
+  &:last-child { border-bottom: none; }
+}
+.tpl-field-name { font-weight: 500; }
+.tpl-field-type { color: var(--primary); font-size: 0.72rem; }
+.tpl-field-desc { color: var(--text-muted); }
+
+.empty-state { text-align: center; padding: 2rem; color: var(--text-muted); }

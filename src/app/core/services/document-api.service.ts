@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { DocumentModel } from '../models/document.model';
+import { environment } from '../../../environments/environment';
 
 interface BlobDocumentInfo {
   fileName: string;
@@ -10,7 +11,8 @@ interface BlobDocumentInfo {
   uploadedAt: string;
 }
 
-export const API_BASE = 'http://localhost:5000/api';
+/** .NET blob-upload backend base URL (per-environment). */
+export const API_BASE = environment.uploadApiBase;
 
 // Files below this size use the simple single-POST path.
 // Files at or above this size use chunked block upload.

@@ -1,0 +1,65 @@
+<div class="documents-page">
+  <header class="page-header">
+    <h1>IDP · Templates</h1>
+    <a class="btn btn-outline" routerLink="/idp">← IDP Features</a>
+  </header>
+
+  <div class="documents-container">
+    <h2>Extraction Templates</h2>
+    <p class="subtitle">Upload a sample document to infer a template, or browse stored ones.</p>
+
+    <!-- Create -->
+    <div class="tpl-create">
+      <div class="tpl-row">
+        <label class="btn btn-outline btn-sm">
+          Choose sample
+          <input type="file" accept=".pdf" (change)="onFileSelected($event)" style="display:none" />
+        </label>
+        <span class="tpl-filename">{{ selectedFile()?.name ?? 'No file selected' }}</span>
+      </div>
+      <div class="tpl-row">
+        <input class="tpl-input" type="text" placeholder="Template name"
+               [ngModel]="templateName()" (ngModelChange)="templateName.set($event)" />
+        <label class="tpl-check">
+          <input type="checkbox" [ngModel]="useLlm()" (ngModelChange)="useLlm.set($event)" />
+          Use LLM inference
+        </label>
+        <button class="btn btn-primary btn-sm" [disabled]="!selectedFile() || uploading()" (click)="createTemplate()">
+          {{ uploading() ? 'Inferring…' : 'Create Template' }}
+        </button>
+      </div>
+      @if (error()) { <p class="tpl-error">{{ error() }}</p> }
+    </div>
+
+    @if (loading()) {
+      <p class="subtitle">Loading templates…</p>
+    } @else if (templates().length === 0) {
+      <div class="empty-state"><p>No templates yet.</p></div>
+    } @else {
+      <div class="tpl-list">
+        @for (t of templates(); track t.template_id) {
+          <div class="tpl-card">
+            <div class="tpl-head" (click)="toggle(t.template_id)">
+              <div class="tpl-meta">
+                <span class="tpl-name">{{ t.name }}</span>
+                <span class="tpl-sub">{{ t.definition.fields.length }} fields · {{ t.source }}</span>
+              </div>
+              <button class="btn-icon" (click)="deleteTemplate(t, $event)" title="Delete">🗑️</button>
+            </div>
+            @if (expanded() === t.template_id) {
+              <div class="tpl-fields">
+                @for (f of t.definition.fields; track f.name) {
+                  <div class="tpl-field">
+                    <span class="tpl-field-name">{{ f.name }}</span>
+                    <span class="tpl-field-type">{{ f.type }}</span>
+                    <span class="tpl-field-desc">{{ f.description }}</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

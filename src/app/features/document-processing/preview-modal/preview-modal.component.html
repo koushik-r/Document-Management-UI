@@ -1,0 +1,104 @@
+@if (isOpen()) {
+  <div class="pm-overlay">
+    <!-- Backdrop -->
+    <div class="pm-backdrop" (click)="handleClose()"></div>
+
+    <!-- Modal shell — full viewport -->
+    <div class="pm-shell">
+      <!-- Header -->
+      <div class="pm-header">
+        <div class="pm-title">
+          <div class="pm-title-row">
+            <h2>Document Review</h2>
+            @if (document()?.template_id) {
+              <span class="pm-badge">{{ document()?.template_id }}</span>
+            }
+            <span class="pm-status" [class]="'status-' + document()?.status">
+              {{ document()?.status }}
+            </span>
+          </div>
+          <span class="pm-filename">{{ document()?.original_filename }}</span>
+        </div>
+
+        <!-- Layout switcher -->
+        <div class="pm-layouts">
+          <button [class.active]="activeLayout() === 'split'" (click)="setLayout('split')">Split</button>
+          <button [class.active]="activeLayout() === 'doc'" (click)="setLayout('doc')">Document</button>
+          <button [class.active]="activeLayout() === 'fields'" (click)="setLayout('fields')">Fields</button>
+        </div>
+
+        <div class="pm-actions">
+          @if (overallConfidence() !== null) {
+            <span class="pm-overall" [class]="confidenceClass(overallConfidence()!)">
+              Overall {{ formatConfidence(overallConfidence()!) }}
+            </span>
+          }
+          <a class="btn btn-outline btn-sm" [href]="rawBlobUrl()" target="_blank" rel="noopener">Open ↗</a>
+          <button class="pm-close" (click)="handleClose()" title="Close">✕</button>
+        </div>
+      </div>
+
+      <!-- Canvas -->
+      <div class="pm-canvas" [class]="'layout-' + activeLayout()">
+        <!-- Document panel -->
+        @if (activeLayout() !== 'fields') {
+          <div class="pm-panel pm-doc-panel">
+            <div class="pm-panel-header">Document Preview</div>
+            <div class="pm-panel-body">
+              @if (isImage()) {
+                <img [src]="rawBlobUrl()" [alt]="document()?.original_filename" class="pm-image" />
+              } @else if (isPdf()) {
+                <iframe [src]="blobUrl()" class="pm-frame" title="Document preview"></iframe>
+              } @else {
+                <div class="pm-no-preview">
+                  <p>Inline preview not available for this file type.</p>
+                  <a class="btn btn-primary btn-sm" [href]="rawBlobUrl()" target="_blank" rel="noopener">
+                    Download / Open
+                  </a>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Extraction / confidence panel -->
+        @if (activeLayout() !== 'doc') {
+          <div class="pm-panel pm-fields-panel">
+            <div class="pm-panel-header">
+              Extracted Fields &amp; Confidence
+              @if (fieldRows().length) {
+                <span class="pm-count">{{ fieldRows().length }} fields</span>
+              }
+            </div>
+            <div class="pm-panel-body">
+              @if (loadingExtraction()) {
+                <div class="pm-center"><div class="pm-spinner"></div><p>Loading extraction…</p></div>
+              } @else if (extractionError()) {
+                <div class="pm-center pm-muted"><p>{{ extractionError() }}</p></div>
+              } @else if (fieldRows().length === 0) {
+                <div class="pm-center pm-muted"><p>No extraction data available.</p></div>
+              } @else {
+                <div class="pm-field-list">
+                  @for (row of fieldRows(); track row.name) {
+                    <div class="pm-field" [class.needs-review]="row.needsReview">
+                      <div class="pm-field-top">
+                        <span class="pm-field-name">{{ fieldLabel(row.name) }}</span>
+                        <span class="pm-conf" [class]="confidenceClass(row.confidence)">
+                          {{ formatConfidence(row.confidence) }}
+                        </span>
+                      </div>
+                      <div class="pm-field-value">{{ row.value }}</div>
+                      @if (row.sourcePages.length) {
+                        <div class="pm-field-src">Pages: {{ row.sourcePages.join(', ') }}</div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

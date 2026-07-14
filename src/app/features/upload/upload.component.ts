@@ -123,6 +123,10 @@ export class UploadComponent {
     this.router.navigate(['/documents']);
   }
 
+  goToIdp() {
+    this.router.navigate(['/idp']);
+  }
+
   formatBytes(bytes: number): string {
     if (bytes === 0) return '0 B';
     const k = 1024;
